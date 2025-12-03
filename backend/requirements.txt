@@ -19,9 +19,12 @@ python-multipart==0.0.6
 # Background Jobs
 celery==5.3.6
 
-# Data & ML (core only for Phase 1)
+# Data & ML
 numpy==1.26.3
 pandas==2.1.4
+scikit-learn==1.4.0
+xgboost==2.0.3
+lightgbm==4.2.0
 
 # NBA API
 nba-api==1.4.1
@@ -32,8 +35,9 @@ httpx==0.26.0
 
 # Utilities
 python-dotenv==1.0.1
-pydantic==2.5.3
+pydantic[email]==2.5.3
 pydantic-settings==2.1.0
+email-validator==2.1.0
 
 # Monitoring
 sentry-sdk[fastapi]==1.40.0
