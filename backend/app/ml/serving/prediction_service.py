@@ -11,7 +11,7 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 
 from app.models.player import Player
-from app.models.prediction import Prediction
+from app.models.prediction import PlayerPrediction
 from app.ml.features.engineer import FeatureEngineer
 from app.ml.features.player_features import PlayerFeatureBuilder
 from app.ml.features.game_features import GameContextFeatureBuilder

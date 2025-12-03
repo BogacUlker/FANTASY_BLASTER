@@ -15,7 +15,7 @@ class PlayerService:
     def __init__(self, db: Session):
         self.db = db
 
-    @cached(ttl=300)
+    @cached(key_prefix="players", ttl=300)
     def get_players(
         self,
         skip: int = 0,

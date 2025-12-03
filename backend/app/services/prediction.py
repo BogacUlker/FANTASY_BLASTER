@@ -15,7 +15,7 @@ class PredictionService:
     def __init__(self, db: Session):
         self.db = db
 
-    @cached(ttl=300)
+    @cached(key_prefix="daily_predictions", ttl=300)
     def get_daily_predictions(
         self,
         prediction_date: date,
@@ -80,7 +80,7 @@ class PredictionService:
             .first()
         )
 
-    @cached(ttl=600)
+    @cached(key_prefix="top_predictions", ttl=600)
     def get_top_predictions(
         self,
         prediction_date: date,
