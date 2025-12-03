@@ -13,16 +13,16 @@ class TestRegister:
             "/api/v1/auth/register",
             json={
                 "email": "newuser@example.com",
+                "username": "newuser",
                 "password": "securepassword123",
-                "full_name": "New User",
             },
         )
         assert response.status_code == 201
         data = response.json()
         assert data["email"] == "newuser@example.com"
-        assert data["full_name"] == "New User"
+        assert data["username"] == "newuser"
         assert "id" in data
-        assert "hashed_password" not in data
+        assert "password_hash" not in data
 
     def test_register_duplicate_email(self, client, test_user):
         """Test registration with existing email fails."""
@@ -30,8 +30,8 @@ class TestRegister:
             "/api/v1/auth/register",
             json={
                 "email": "test@example.com",
+                "username": "anotheruser",
                 "password": "newpassword123",
-                "full_name": "Another User",
             },
         )
         assert response.status_code == 409
@@ -43,8 +43,8 @@ class TestRegister:
             "/api/v1/auth/register",
             json={
                 "email": "not-an-email",
+                "username": "testuser2",
                 "password": "securepassword123",
-                "full_name": "Test User",
             },
         )
         assert response.status_code == 422
@@ -55,8 +55,8 @@ class TestRegister:
             "/api/v1/auth/register",
             json={
                 "email": "newuser@example.com",
+                "username": "testuser3",
                 "password": "123",
-                "full_name": "Test User",
             },
         )
         assert response.status_code == 422
@@ -71,7 +71,7 @@ class TestLogin:
             "/api/v1/auth/login",
             json={
                 "email": "test@example.com",
-                "password": "testpassword123",
+                "password": "testpass123",
             },
         )
         assert response.status_code == 200
@@ -112,7 +112,7 @@ class TestMe:
         assert response.status_code == 200
         data = response.json()
         assert data["email"] == test_user.email
-        assert data["full_name"] == test_user.full_name
+        assert data["username"] == test_user.username
 
     def test_get_me_unauthenticated(self, client):
         """Test getting current user without authentication."""
@@ -130,7 +130,7 @@ class TestRefreshToken:
             "/api/v1/auth/login",
             json={
                 "email": "test@example.com",
-                "password": "testpassword123",
+                "password": "testpass123",
             },
         )
         tokens = login_response.json()

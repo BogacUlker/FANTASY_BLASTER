@@ -15,21 +15,21 @@ class TestAuthService:
         service = AuthService(db)
         user_data = UserCreate(
             email="new@example.com",
+            username="newuser",
             password="securepassword123",
-            full_name="New User",
         )
         user = service.create_user(user_data)
         assert user.email == "new@example.com"
-        assert user.full_name == "New User"
-        assert user.hashed_password != "securepassword123"
+        assert user.username == "newuser"
+        assert user.password_hash != "securepassword123"
 
     def test_create_user_duplicate_email(self, db, test_user):
         """Test user creation with duplicate email fails."""
         service = AuthService(db)
         user_data = UserCreate(
             email="test@example.com",
+            username="duplicateuser",
             password="anotherpassword",
-            full_name="Duplicate User",
         )
         with pytest.raises(ConflictException):
             service.create_user(user_data)
@@ -37,7 +37,7 @@ class TestAuthService:
     def test_authenticate_success(self, db, test_user):
         """Test successful authentication."""
         service = AuthService(db)
-        user = service.authenticate("test@example.com", "testpassword123")
+        user = service.authenticate("test@example.com", "testpass123")
         assert user.id == test_user.id
 
     def test_authenticate_wrong_password(self, db, test_user):
@@ -72,21 +72,3 @@ class TestAuthService:
         assert user is not None
         assert user.email == test_user.email
 
-    def test_update_refresh_token(self, db, test_user):
-        """Test updating user refresh token."""
-        service = AuthService(db)
-        service.update_refresh_token(test_user.id, "new-refresh-token")
-        db.refresh(test_user)
-        assert test_user.refresh_token == "new-refresh-token"
-
-    def test_verify_refresh_token_success(self, db, test_user):
-        """Test successful refresh token verification."""
-        service = AuthService(db)
-        service.update_refresh_token(test_user.id, "valid-token")
-        assert service.verify_refresh_token(test_user.id, "valid-token") is True
-
-    def test_verify_refresh_token_failure(self, db, test_user):
-        """Test failed refresh token verification."""
-        service = AuthService(db)
-        service.update_refresh_token(test_user.id, "valid-token")
-        assert service.verify_refresh_token(test_user.id, "invalid-token") is False

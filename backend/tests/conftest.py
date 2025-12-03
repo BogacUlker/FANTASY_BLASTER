@@ -67,8 +67,8 @@ def test_user(db) -> User:
     """Create a test user."""
     user = User(
         email="test@example.com",
-        hashed_password=get_password_hash("testpassword123"),
-        full_name="Test User",
+        username="testuser",
+        password_hash=get_password_hash("testpass123"),
         is_active=True,
         tier=UserTier.FREE,
     )
@@ -95,11 +95,12 @@ def authorized_client(client, test_user_token):
 def test_team(db) -> Team:
     """Create a test team."""
     team = Team(
-        nba_team_id="1610612747",
-        name="Los Angeles Lakers",
+        id=1610612747,  # NBA API team ID as primary key
+        full_name="Los Angeles Lakers",
         abbreviation="LAL",
+        nickname="Lakers",
         city="Los Angeles",
-        conference="Western",
+        conference="West",
         division="Pacific",
     )
     db.add(team)
@@ -112,13 +113,16 @@ def test_team(db) -> Team:
 def test_player(db, test_team) -> Player:
     """Create a test player."""
     player = Player(
-        nba_player_id="2544",
-        name="LeBron James",
+        id=2544,  # NBA API player ID as primary key
+        full_name="LeBron James",
+        first_name="LeBron",
+        last_name="James",
         position="SF",
         height="6-9",
-        weight=250,
+        weight="250",
         birth_date=date(1984, 12, 30),
         team_id=test_team.id,
+        team_abbreviation="LAL",
         injury_status=InjuryStatus.HEALTHY,
         is_active=True,
     )
@@ -133,8 +137,8 @@ def pro_user(db) -> User:
     """Create a pro tier user."""
     user = User(
         email="pro@example.com",
-        hashed_password=get_password_hash("propassword123"),
-        full_name="Pro User",
+        username="prouser",
+        password_hash=get_password_hash("propass123"),
         is_active=True,
         tier=UserTier.PRO,
     )
@@ -149,8 +153,8 @@ def admin_user(db) -> User:
     """Create an admin user."""
     user = User(
         email="admin@example.com",
-        hashed_password=get_password_hash("adminpassword123"),
-        full_name="Admin User",
+        username="adminuser",
+        password_hash=get_password_hash("adminpass123"),
         is_active=True,
         is_superuser=True,
         tier=UserTier.PREMIUM,

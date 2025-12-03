@@ -30,8 +30,8 @@ class AuthService:
 
         user = User(
             email=user_data.email,
-            hashed_password=get_password_hash(user_data.password),
-            full_name=user_data.full_name,
+            username=user_data.username,
+            password_hash=get_password_hash(user_data.password),
         )
         self.db.add(user)
         self.db.commit()
@@ -43,25 +43,14 @@ class AuthService:
         user = self.get_user_by_email(email)
         if not user:
             raise UnauthorizedException("Invalid email or password")
-        if not verify_password(password, user.hashed_password):
+        if not verify_password(password, user.password_hash):
             raise UnauthorizedException("Invalid email or password")
         if not user.is_active:
             raise UnauthorizedException("Account is disabled")
 
         # Update last login
-        user.last_login = datetime.utcnow()
+        user.last_login_at = datetime.utcnow()
         self.db.commit()
 
         return user
 
-    def update_refresh_token(self, user_id: int, refresh_token: str | None) -> None:
-        """Update user's refresh token."""
-        user = self.get_user_by_id(user_id)
-        if user:
-            user.refresh_token = refresh_token
-            self.db.commit()
-
-    def verify_refresh_token(self, user_id: int, refresh_token: str) -> bool:
-        """Verify if the refresh token matches the stored one."""
-        user = self.get_user_by_id(user_id)
-        return user is not None and user.refresh_token == refresh_token
