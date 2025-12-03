@@ -15,6 +15,9 @@ class PlayerBase(BaseModel):
     position: Optional[str] = None
     team_abbreviation: Optional[str] = None
 
+    class Config:
+        from_attributes = True
+
 
 class PlayerResponse(PlayerBase):
     """Full player response schema."""
