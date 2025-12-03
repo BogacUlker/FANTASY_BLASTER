@@ -1,6 +1,7 @@
 """
 Pytest configuration and fixtures.
 """
+import os
 import pytest
 from datetime import date
 from sqlalchemy import create_engine
@@ -15,15 +16,22 @@ from app.models.team import Team
 from app.models.player import Player, InjuryStatus
 from app.core.security import get_password_hash, create_access_token
 
-# Test database URL (in-memory SQLite for tests)
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+# Use PostgreSQL from environment if available, otherwise SQLite for local dev
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+if DATABASE_URL:
+    # PostgreSQL in CI - supports UUID natively
+    engine = create_engine(DATABASE_URL)
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+else:
+    # SQLite for local development (limited - some tests may fail)
+    SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 @pytest.fixture(scope="function")

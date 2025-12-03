@@ -118,8 +118,8 @@ class TestGameStatsValidator:
             "player_id": 1,
             "game_id": "0022400001",
             "game_date": "2024-12-01",
-            "points": 80,  # Unusual
-            "rebounds": 35,  # Unusual
+            "points": 105,  # Outside 0-100 range
+            "rebounds": 45,  # Outside 0-40 range
         }
         result = GameStatsValidator.validate(data)
 

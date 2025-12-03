@@ -8,7 +8,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 
-from app.ml.features.engineer import FeatureEngineer, GameContextFeatureBuilder
+from app.ml.features.engineer import FeatureEngineer
+from app.ml.features.game_features import GameContextFeatureBuilder
 
 
 class TestFeatureEngineer:
