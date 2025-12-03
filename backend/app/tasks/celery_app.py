@@ -33,14 +33,28 @@ celery_app.conf.update(
 
 # Beat schedule for periodic tasks
 celery_app.conf.beat_schedule = {
+    # Data ingestion tasks
     "fetch-daily-games": {
         "task": "app.tasks.data_ingestion.fetch_daily_games",
         "schedule": 3600.0,  # Every hour
     },
     "update-player-stats": {
         "task": "app.tasks.data_ingestion.update_player_stats",
-        "schedule": 1800.0,  # Every 30 minutes during games
+        "schedule": 1800.0,  # Every 30 minutes
     },
+    "sync-nba-rosters-daily": {
+        "task": "app.tasks.data_ingestion.sync_nba_rosters",
+        "schedule": 86400.0,  # Daily
+    },
+    "sync-nba-players-daily": {
+        "task": "app.tasks.data_ingestion.sync_nba_players",
+        "schedule": 86400.0,  # Daily
+    },
+    "data-quality-check": {
+        "task": "app.tasks.data_ingestion.run_data_quality_check",
+        "schedule": 43200.0,  # Every 12 hours
+    },
+    # Prediction tasks
     "generate-daily-predictions": {
         "task": "app.tasks.predictions.generate_daily_predictions",
         "schedule": 21600.0,  # Every 6 hours
