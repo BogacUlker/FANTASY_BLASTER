@@ -391,10 +391,10 @@ class PredictionService:
         """Check for cached predictions."""
         cutoff = datetime.utcnow() - timedelta(hours=self.CACHE_TTL_HOURS)
 
-        cached = self.db.query(Prediction).filter(
-            Prediction.player_id == player_id,
-            Prediction.prediction_date == game_date,
-            Prediction.created_at >= cutoff
+        cached = self.db.query(PlayerPrediction).filter(
+            PlayerPrediction.player_id == player_id,
+            PlayerPrediction.prediction_date == game_date,
+            PlayerPrediction.created_at >= cutoff
         ).all()
 
         if not cached:
@@ -424,7 +424,7 @@ class PredictionService:
     def _cache_prediction(self, result: PredictionResult) -> None:
         """Store prediction in database cache."""
         try:
-            prediction = Prediction(
+            prediction = PlayerPrediction(
                 player_id=result.player_id,
                 prediction_date=result.as_of_date or date.today(),
                 predicted_value=result.prediction,
